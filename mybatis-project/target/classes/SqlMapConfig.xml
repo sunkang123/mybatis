@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <!--加载配置文件-->
+    <properties resource="db.properties">
+        <!--db.properties的配置会覆盖下面的配置，建议在db.properties配置文件中配置-->
+       <!-- <property name="jdbc.driver" value="" ></property>-->
+    </properties>
+    
+    <!--全局的配置参数，需要就配置-->
+    <settings>
+        <!--打开延迟加载的开关 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--将积极加载改为消极加载 -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!--开启二级缓存 mapper级别的缓存-->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
+
+    <!--别名定义-->
+    <typeAliases>
+        <!--定义单个别名，然后mapepr.xml文件就可以引用别名了-->
+  <!--      <typeAlias type="com.mybatis.project.po.User" alias="user"></typeAlias>-->
+        <!--批量别名定义(常用)指定包名，自动定义别名，别名就是类名（首字母大写或小写都可以）-->
+        <package name="com.mybatis.project.po"></package>
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="com.mybatis.project.typeHandlers.ExampleTypeHandler"/>
+    </typeHandlers>
+
+    <plugins>
+        <plugin interceptor="com.mybatis.project.plugins.TestPlugin"></plugin>
+    </plugins>
+    <!-- 和spring整合后 environments配置将废除-->
+    <environments default="development">
+        <environment id="development">
+            <!-- 使用jdbc事务管理-->
+            <transactionManager type="JDBC" />
+            <!-- 数据库连接池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}" />
+                <property name="url" value="${jdbc.url}" />
+                <property name="username" value="${jdbc.username}" />
+                <property name="password" value="${jdbc.password}" />
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <!--原始的dao层的开发-->
+        <mapper resource="sqlmap/User.xml"/>
+        <!--mapper层的开发-->
+       <!-- <mapper resource="mapper/UserMapper.xml"/>-->
+        <!--通过mapper接口来加载映射文件，
+        遵循一些规范：需要将mapper接口类名和mapper.xml文件名称保持一致，且在一个目录中，
+            规范的前提是： 使用mapper代理方法
+        -->
+<!--        <mapper class="com.mybatis.project.mapper.UserMapper"></mapper>-->
+
+        <!--批量加载mapper
+            指定mapepr接口的名称，mybatis 自动扫描包下所有的mapper接口进行加载
+              遵循一些规范：需要将mapper接口类名和mapper.xml文件名称保持一致，且在一个目录中，
+            规范的前提是： 使用mapper代理方法
+        -->
+        <package name="com.mybatis.project.mapper"/>
+    </mappers>
+
+
+
+</configuration>

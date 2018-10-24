@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <!--别名定义-->
+    <typeAliases>
+        <!--定义单个别名，然后mapepr.xml文件就可以引用别名了-->
+  <!--      <typeAlias type="com.mybatis.project.po.User" alias="user"></typeAlias>-->
+        <!--批量别名定义(常用)指定包名，自动定义别名，别名就是类名（首字母大写或小写都可以）-->
+        <package name="com.mybatis.project.po"></package>
+    </typeAliases>
+    
+
+    <mappers>
+        <!--原始的dao层的开发-->
+        <mapper resource="sqlmap/User.xml"/>
+
+        <!--如果spring 使用了扫描器，这里就不需要使用了-->
+
+        <!--<package name="com.mybatis.project.mapper"/>-->
+    </mappers>
+
+</configuration>
