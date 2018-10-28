@@ -208,4 +208,67 @@
       address = #{address,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select  id, username, birthday, sex, address from User
+  </select>
+
+
+  <insert id="insertBatch" parameterType="list">
+    insert into user(username,birthday,sex,address) values
+    <foreach collection="list" item="user"  separator=",">
+      (#{user.username},#{user.birthday},#{user.sex},#{user.address})
+    </foreach>
+  </insert>
+
+  <!-- 查询用户所在的订单号，一个用户对应多个订单号-->
+  <select id="findOrdersByUser" parameterType="com.mybatis.project.po.User" resultMap="findOrdersByUserMap">
+          select  users.*,
+                            orders.id orders_id,
+                            orders.createtime,
+                            orders.note,
+                            orders.number
+                from orders , user  users
+      where orders.user_id = users.id ;
+  </select>
+
+  <!--通过延迟加载  只需要查询所需要的数据-->
+
+  <select id = "findOrdersByUserLazy" parameterType="com.mybatis.project.po.User" resultMap="findOrdersByUserLazyMap" >
+     select *  from user
+  </select>
+
+
+  <resultMap id="findOrdersByUserMap" type="com.mybatis.project.po.User">
+    <id property="id" column="id"/>
+    <result property="username" column="username"/>
+    <result property="sex" column="sex"/>
+    <result property="birthday" column="birthday"/>
+    <result property="address" column="address"/>
+    <collection property="orderList" ofType="com.mybatis.project.po.Orders">
+        <id property="id" column="orders_id"/>
+        <result property="userId" column="id"/>
+        <result property="number" column="number"/>
+        <result property="createtime" column="createtime"/>
+        <result property="note" column="note"/>
+    </collection>
+  </resultMap>
+
+
+  <resultMap id="findOrdersByUserLazyMap" type="com.mybatis.project.po.User" >
+    <id property="id" column="id"/>
+    <result property="username" column="username"/>
+    <result property="sex" column="sex"/>
+    <result property="birthday" column="birthday"/>
+    <result property="address" column="address"/>
+    <!--select 表示查询的sql语句，column表示关联查询的参数-->
+    <collection property="orderList" ofType="com.mybatis.project.po.Orders"  select="findOrdersById" column="id"/>
+  </resultMap>
+
+  <select id="findOrdersById" resultType="com.mybatis.project.po.Orders" parameterType="int" >
+    select * from orders   where user_id =#{id}
+  </select>
+
+
+
 </mapper>
